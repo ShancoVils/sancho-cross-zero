@@ -1,0 +1,105 @@
+*{
+    margin: 0;
+    padding: 0;
+    border: 1px solid black;
+
+}
+
+body{
+    height: 100%;
+    border: 5px solid black;
+}
+
+.buttons{
+    display: flex;
+    border: 1px solid black;
+    width: 200px;
+    height: 50px;
+}
+
+.buttons button{
+    width: 100%;
+    height: 50px;
+}
+
+
+.container{
+    margin: 0 auto;
+    display: grid;
+    margin-top: 100px;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: stretch;
+    border: 2px solid black;
+    width: 300px;
+    height: 300px;
+}
+.field{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    transition: 0.5s;
+}
+
+.field:hover{
+    background:rgba(141, 136, 136, 0.521);
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.lock{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.lock:hover{
+    background:rgba(184, 72, 72, 0.507);
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+
+.unlock{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    transition: 0.5s;
+}
+
+.unlock:hover{
+    background:rgba(91, 204, 119, 0.5);
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+
+
+.win_fields{
+    background: rgb(79, 69, 226);
+}
+
+
+
+.field-input{
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    font-size: 70pt;
+
+}
+
+.your-side{
+    width: 200px;
+    height: 70px;
+}
