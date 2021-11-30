@@ -73,7 +73,7 @@ TEMPLATES = [
 
 # WSGI_APPLICATION = 'web_socket_app.wsgi.application'
 
-ASGI_APPLICATION = "web_socket_app.asgi.application"
+ASGI_APPLICATION = "web_socket_app.routing.application"
 
 
 # Database
@@ -89,10 +89,11 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
         },
     },
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
