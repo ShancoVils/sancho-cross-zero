@@ -12,10 +12,17 @@
         <button id = "zero-change" value ="0">0</button>
         <button id = "cross-change" value ="X">X</button>
     </div>
-    <div class = "rules">
-
-    </div>
+    <div class = "rules"></div>
     <div class = "your-side"></div>
+    <div class = "nickname">
+        <input type = "text" placeholder = "Nickname" id = "gamer_nick"></input><br>
+    </div>
+    <div class  = "name_gamers">
+        <div class = "gamer_you"></div>
+        <div class = "gamer_another"></div>
+    </div>
+    
+
     
     <div class = "container">
         <div class = "field">
@@ -57,53 +64,106 @@
         0 - ЗНачение 0 
     */
 
+    //До начала игры
+
+    const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/test/'
+    );
+
+    var ready_status = 0; //Статус готловности: 0 - Никто не готов; 1 - Готов 1 игрок; 2 - Готовы оба игрока;
+    
+    var enemy_nickname; //Имя соперника
 
     var array = [];
     var array_time = [];
 
-
-
-    
     //Цвет при ходе/ожидании/не в игре
     function color_fied(user_moution){
         console.log(user_moution)
         let fields = document.querySelectorAll(".field");
-        for (let i = 0 ; i < fields.length; i++) {
+        for (const field of fields) {
             if (user_moution == 0){
                 console.log("locked");
-                fields[i].classList.remove("unlock");
-                fields[i].classList.add("lock");
+                field.classList.remove("unlock");
+                field.classList.add("lock");
             }
             else if(user_moution == 1){
                 console.log("unlocked");
-                fields[i].classList.remove("lock");
-                fields[i].classList.add("unlock");
+                field.classList.remove("lock");
+                field.classList.add("unlock");
             }
             else if(user_moution == 2){
-                fields[i].classList.remove("lock");
-                fields[i].classList.remove("unlock");
+                field.classList.remove("lock");
+                field.classList.remove("unlock");
             }
                 
         }
     }
    
-
-
+    //Отправка данных по ходу
     function stupid_send(){
         chatSocket.send(JSON.stringify({
             'fields_data': array,
         }));
-        console.log("отправка")
+        console.log("отправка хода")
     }
 
+    //Отправка данных перед началом игры
+    function send_pre_game_data(gamer_nickname,user_wep){
+        if(user_wep == 0){
+        }
+        else if(user_wep == 1){
+            user_wep = "X";
+        }
+
+        chatSocket.send(JSON.stringify({
+            'nickname': gamer_nickname,
+            'user_wep': user_wep,
+        }));
+        console.log("отправка перед игрой")
+    }
+
+    //Создание элементов после начала игры (твои данные)
+    function create_game_begin_elem_your(gamer_nickname,user_wep){
+        if (user_wep==0){
+            document.querySelector(".gamer_you").innerHTML = "<span>"+ gamer_nickname+ " - O</span>";
+            document.querySelector("#zero-change").style.display = "none";
+        }
+        else if(user_wep==1){
+            document.querySelector(".gamer_you").innerHTML = "<span>"+ gamer_nickname+ " - X</span>";
+            document.querySelector("#cross-change").style.display = "none";
+        }
+        console.log("Вы готовы")
+        ready_status++;
+        console.log(ready_status)
+    };
+
+    //Создание элементов после начала игры (чужие данные)
+    function create_game_begin_elem_another(enemy_nickname,user_wep){
+        if (user_wep==0){
+            document.querySelector(".gamer_another").innerHTML = "<span>"+ enemy_nickname+ " -"+user_wep+"</span>";
+            document.querySelector("#zero-change").style.display = "none";
+            
+        }
+        else if(user_wep=="X"){
+            document.querySelector(".gamer_another").innerHTML = "<span>"+ enemy_nickname+ " -"+user_wep+"</span>";
+            document.querySelector("#cross-change").style.display = "none";
+        }
+        console.log("Апонент готов")
+        ready_status++;
+        console.log("Статус: " + ready_status)
+    };
+    
     function getFieldsData(){
         list_data = document.querySelectorAll(".field-input");
-        for (var i = 0 ; i < list_data.length; i++) {
-            if (list_data[i].innerHTML == ""){
+        for (const elem_list of list_data) {
+            if (elem_list.innerHTML == ""){
                 array.push("");
             }
             else{
-                array.push(list_data[i].innerHTML);
+                array.push(elem_list.innerHTML);
             }
         };
         console.log("Основной массив "+ array)
@@ -113,35 +173,53 @@
 
     }
 
-
-
-
-
-
+    //Кнопки выбора фигуры
     var user_moution;
     var user_wep;
+    var gamer_nickname;
+
     zero_butt = document.querySelector('#zero-change');
     zero_butt.addEventListener('click',
     function(){
-        user_wep = 0;
-        user_moution = 0;
-        document.querySelector(".buttons").style.display = "none";
-        document.querySelector(".rules").innerHTML = "<h2>"+"Первый ходит Х" +"</h2>";
-        document.querySelector(".your-side").innerHTML = "<h3>Вы О</h3>";
-        color_fied(user_moution)
+        var gamer_name =  document.querySelector("#gamer_nick");
+        if(gamer_name.value.length != 0 ){
+            gamer_nickname = gamer_name.value
+            user_wep = 0; //Обозначение фигуры
+            user_moution = 0; //Обозначение хода
+            document.querySelector(".buttons").style.display = "none";
+            document.querySelector(".rules").innerHTML = "<h2>"+"Первый ходит Х" +"</h2>";
+            document.querySelector(".your-side").innerHTML = "<h3>Вы О</h3>";
+
+            create_game_begin_elem_your(gamer_nickname,user_wep)
+            send_pre_game_data(gamer_nickname,user_wep)
+            color_fied(user_moution)
+        }
+        else{
+            alert("Введите имя")
+        }
+
+        
     })
-
-
 
     cross_butt = document.querySelector('#cross-change');
     cross_butt.addEventListener('click' ,
     function(){
-        user_wep = 1;
-        user_moution = 1;
-        document.querySelector(".buttons").style.display = "none";
-        document.querySelector(".rules").innerHTML = "<h2>"+"Первый ходит Х" +"</h2>";
-        document.querySelector(".your-side").innerHTML = "<h3>Вы Х</h3>";
-        color_fied(user_moution)
+        var gamer_name =  document.querySelector("#gamer_nick");
+        if(gamer_name.value.length != 0 ){
+            gamer_nickname = gamer_name.value
+            user_wep = 1;
+            user_moution = 1;
+            document.querySelector(".buttons").style.display = "none";
+            document.querySelector(".rules").innerHTML = "<h2>"+"Первый ходит Х" +"</h2>";
+            document.querySelector(".your-side").innerHTML = "<h3>Вы Х</h3>";
+
+            create_game_begin_elem_your(gamer_nickname,user_wep)
+            send_pre_game_data(gamer_nickname,user_wep)
+            color_fied(user_moution)
+        }
+        else{
+            alert("Введите имя")
+        }
     });
 
     //Определение поля
@@ -150,12 +228,13 @@
         for (var i = 0 ; i < field.length; i++) {
             field[i].addEventListener('click' ,
             function(event){
+                console.log("Статус игры " +  ready_status)
                 let changed_fields = document.querySelector("#"+event.target.id);
-                if (user_wep == "1"){
+                if (user_wep == "1" && ready_status>=2 ){
                     changed_fields.innerText = "X";
                     getFieldsData()
                 }
-                else if (user_wep == "0"){
+                else if (user_wep == "0" && ready_status>=2 ){
                     changed_fields.innerText = "O";
                     getFieldsData()
                 }
@@ -166,29 +245,26 @@
             } , false ) ; 
         };
     };
-
-
-
-
-    const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/test/'
-        );
-    
-
-
     console.log(chatSocket)
-
 
     chatSocket.onmessage = function(e) {
         let data = JSON.parse(e.data);
         let data_fields = data['data_fields'];
         let end_game = data['end_game_signal'];
         let result_game = data['end_game_result'];
-       
+        enemy_nickname = data['nickname'];
         
-        if (end_game !="Конец"){
+        if(gamer_nickname!=enemy_nickname ){
+            create_game_begin_elem_another(enemy_nickname,data['user_wep'])
+        }
+
+        if (ready_status==2){
+            alert("Все готовы");
+        }
+
+        console.log("helpfull gg " + data_fields)
+
+        if (end_game !="Конец" && data_fields!=undefined ){
             console.log("раннее"+user_moution)
             if (user_moution === 0){
                 user_moution = 1;
@@ -220,7 +296,7 @@
             }
 
         }
-        else{
+        else if (data_fields!=undefined){
             for (var i = 0; i < data_fields.length; i++) {
                 field = document.getElementsByClassName('field-input');
                 for (var i = 0 ; i < field.length; i++) {
@@ -239,21 +315,11 @@
                 changed_fields.classList.add("win_fields");
 
             }
-
-
-            
-
-
-
             user_moution = 2
             color_fied(user_moution)
             console.log("Конец победа");
             setTimeout ("alert('Игра окончена')",500);
         }
-
-
-
-       
     }; 
 
     chatSocket.onclose = function(e) {
