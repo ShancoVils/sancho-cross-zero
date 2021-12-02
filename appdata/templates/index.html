@@ -6,51 +6,55 @@
     <meta charset="utf-8"/>
     <title>Chat Room</title>
     <link rel="stylesheet"  href="{% static 'style.css' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    <div class = "buttons">
-        <button id = "zero-change" value ="0">0</button>
-        <button id = "cross-change" value ="X">X</button>
-    </div>
-    <div class = "rules"></div>
-    <div class = "your-side"></div>
-    <div class = "nickname">
-        <input type = "text" placeholder = "Nickname" id = "gamer_nick"></input><br>
-    </div>
-    <div class  = "name_gamers">
-        <div class = "gamer_you"></div>
-        <div class = "gamer_another"></div>
-    </div>
-    
-
-    
-    <div class = "container">
-        <div class = "field">
-            <div class = "field-input" id = "elem0"></div>
+    <div class = "main_container">
+        <div class = "buttons">
+            <button id = "zero-change" value ="0">0</button>
+            <button id = "cross-change" value ="X">X</button>
         </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem1"></div>
+        <div class = "rules"></div>
+        <div class = "nickname">
+            <input class = "nickname_input"  type = "text" placeholder = "Nickname" id = "gamer_nick"></input><br>
         </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem2"></div>
+        <div class  = "name_gamers">
+            <div class = "gamer_you"></div>
+            <div class = "gamer_another"></div>
         </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem3"></div>
-        </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem4"></div>
-        </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem5"></div>
-        </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem6"></div>
-        </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem7"></div>
-        </div>
-        <div class = "field">
-            <div class = "field-input" id = "elem8"></div>
+        
+        <div class = "container">
+            <div class = "field">
+                <div class = "field-input" id = "elem0"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem1"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem2"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem3"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem4"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem5"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem6"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem7"></div>
+            </div>
+            <div class = "field">
+                <div class = "field-input" id = "elem8"></div>
+            </div>
         </div>
     </div>
 
@@ -88,15 +92,18 @@
                 console.log("locked");
                 field.classList.remove("unlock");
                 field.classList.add("lock");
+                document.querySelector(".rules").innerHTML = "<h2>Ход другого игрока</h2>";
             }
             else if(user_moution == 1){
                 console.log("unlocked");
                 field.classList.remove("lock");
                 field.classList.add("unlock");
+                document.querySelector(".rules").innerHTML = "<h2>Ваш ход</h2>";
             }
             else if(user_moution == 2){
                 field.classList.remove("lock");
                 field.classList.remove("unlock");
+                document.querySelector(".rules").innerHTML = "<h2>Игра окончена</h2>";
             }
                 
         }
@@ -135,6 +142,9 @@
             document.querySelector(".gamer_you").innerHTML = "<span>"+ gamer_nickname+ " - X</span>";
             document.querySelector("#cross-change").style.display = "none";
         }
+        document.querySelector(".nickname").style.display = "none";
+        document.querySelector(".container").style.marginTop = "90px";
+
         console.log("Вы готовы")
         ready_status++;
         console.log(ready_status)
@@ -188,7 +198,6 @@
             user_moution = 0; //Обозначение хода
             document.querySelector(".buttons").style.display = "none";
             document.querySelector(".rules").innerHTML = "<h2>"+"Первый ходит Х" +"</h2>";
-            document.querySelector(".your-side").innerHTML = "<h3>Вы О</h3>";
 
             create_game_begin_elem_your(gamer_nickname,user_wep)
             send_pre_game_data(gamer_nickname,user_wep)
@@ -211,7 +220,6 @@
             user_moution = 1;
             document.querySelector(".buttons").style.display = "none";
             document.querySelector(".rules").innerHTML = "<h2>"+"Первый ходит Х" +"</h2>";
-            document.querySelector(".your-side").innerHTML = "<h3>Вы Х</h3>";
 
             create_game_begin_elem_your(gamer_nickname,user_wep)
             send_pre_game_data(gamer_nickname,user_wep)
@@ -221,6 +229,7 @@
             alert("Введите имя")
         }
     });
+
 
     //Определение поля
     window.onload = function(){
